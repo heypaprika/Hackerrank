@@ -1,0 +1,30 @@
+import sys
+
+# input : x - 시작 x좌표, y - 시작 y좌표, size : 가로 세로 사이즈
+# output : 숫자(0,1) 혹은 문자열("(0001)")
+def quadtree(x, y, size):
+    # 맵 전역변수화
+    global MAP
+    # 현재의 MAP은 들어온 input(x,y,size)에 따라 달리 구성된다.
+    current_MAP = [MAP[i][x:x+size] for i in range(y, y+size)]
+
+    # 현재 맵의 전체가 1인 경우에 1을 반환하고, 전체가 0인 경우에 0을 반환한다.
+    if sum(sum(current_MAP,[])) == size ** 2:
+        return 1
+    elif sum(sum(current_MAP,[])) == 0:
+        return 0
+    # 현재 맵에 1과 0이 섞여있다면, else 이하를 재귀적으로 들어가서 "(xxxx)"를 return 한다.
+    else:
+        a=quadtree(x, y, size//2)
+        b=quadtree(x+size//2, y, size//2)
+        c=quadtree(x, y+size//2, size//2)
+        d=quadtree(x+size//2, y+size//2, size//2)
+        return "("+str(a)+str(b)+str(c)+str(d)+")"
+
+if __name__ == '__main__':
+    # 맵 사이즈 입력 받기
+    N = int(sys.stdin.readline())
+    # 맵 이중 리스트로 입력받기
+    MAP = [list(map(int, list(sys.stdin.readline().rstrip('\n')))) for _ in range(N)]
+    # 시작좌표가 (0, 0)이고 사이즈가 N이라는 정보를 넘겨주고, quadtree의 마지막 return 값을 출력함.
+    print(quadtree(0, 0, len(MAP)))
